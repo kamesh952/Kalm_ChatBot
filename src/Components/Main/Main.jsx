@@ -1,5 +1,4 @@
-// Main.js
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import "./Main.css";
 import { assets } from "../../assets/assets";
 import { Context } from "../../context/context";
@@ -18,18 +17,44 @@ const Main = () => {
   } = useContext(Context);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarRef = useRef(null);
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
   };
 
+  // Close sidebar if click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        sidebarOpen
+      ) {
+        setSidebarOpen(false);
+      }
+    };
+
+    if (sidebarOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [sidebarOpen]);
+
   return (
     <div className="main-wrapper">
-      {/* Only render sidebar when sidebarOpen is true */}
-      {sidebarOpen && <Sidebar toggleSidebar={toggleSidebar} />}
+      {sidebarOpen && (
+        <div ref={sidebarRef}>
+          <Sidebar toggleSidebar={toggleSidebar} isOpen={sidebarOpen} />
+        </div>
+      )}
 
       <div className="main">
-        {/* Navigation */}
         <div className="nav">
           <div className="mobile-menu-icon" onClick={toggleSidebar}>
             <FaBars />
