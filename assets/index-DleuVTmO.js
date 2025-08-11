@@ -264,7 +264,7 @@ Error generating stack: `+e.message+`
         ${m?"fixed top-0 left-0 z-50 w-64 h-full shadow-2xl":"inline-flex"}
         ${m&&!c?"-translate-x-full":"translate-x-0"}
         ${m?"":r?"w-64":"w-20"}
-      `,children:[x.jsxs("div",{className:"top",children:[m&&x.jsxs("div",{className:"flex items-center justify-between mb-6 border-b border-gray-700 pb-4",children:[x.jsxs("div",{className:"flex items-center gap-2",children:[x.jsx("img",{src:"logo.png",alt:"logo",className:"h-7"}),x.jsx("span",{className:"text-white font-medium",children:"Kalm AI"})]}),x.jsx("button",{onClick:d,className:"text-gray-400 hover:text-white",children:x.jsx(zy,{size:24})})]}),!m&&x.jsxs("div",{className:`
+      `,children:[x.jsxs("div",{className:"top",children:[m&&x.jsxs("div",{className:"flex items-center justify-between mb-6 border-b border-gray-700 pb-4",children:[x.jsxs("div",{className:"flex items-center gap-2",children:[x.jsx("img",{src:"logoc.png",alt:"logo",className:"h-7"}),x.jsx("span",{className:"text-white font-medium",children:"Kalm AI"})]}),x.jsx("button",{onClick:d,className:"text-gray-400 hover:text-white",children:x.jsx(zy,{size:24})})]}),!m&&x.jsxs("div",{className:`
               flex items-center w-full p-2 mb-4
               ${r?"justify-between":"justify-center"}
             `,children:[r&&x.jsxs("div",{className:"flex items-center gap-2",children:[x.jsx("img",{src:"logo.png",alt:"logo",className:"h-7"}),x.jsx("span",{className:"text-white font-medium",children:"Kalm AI"})]}),x.jsx("button",{onClick:()=>s(V=>!V),className:"cursor-pointer flex items-center text-2xl text-gray-400 hover:text-white",children:r?x.jsx(xy,{}):x.jsx(Ny,{})})]}),x.jsxs("button",{className:`
