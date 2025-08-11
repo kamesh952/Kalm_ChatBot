@@ -71,7 +71,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         {isMobile && (
           <div className="flex items-center justify-between mb-6 border-b border-gray-700 pb-4">
             <div className="flex items-center gap-2">
-              <img src="logo.png" alt="logo" className="h-7" />
+              <img src="logoc.png" alt="logo" className="h-7" />
               <span className="text-white font-medium">Kalm AI</span>
             </div>
             <button
