@@ -93,7 +93,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           >
             {extended && (
               <div className="flex items-center gap-2">
-                <img src="logo.png" alt="logo" className="h-7" />
+                <img src="logoc.png" alt="logo" className="h-7" />
                 <span className="text-white font-medium">Kalm AI</span>
               </div>
             )}

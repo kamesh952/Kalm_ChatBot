@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from"@google/generative-ai";
 
-const API_KEY = "AIzaSyBNLDMqIChfDemBARCbjhekqydhMgVujFE";
+const API_KEY = "AIzaSyDV2CHd2Ufv1B7VlTlycIbVhU5n3XBArCs";
 
 const runChat = async (prompt) => {
   const genAI = new GoogleGenerativeAI(API_KEY);
