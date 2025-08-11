@@ -6,7 +6,7 @@ const runChat = async (prompt) => {
   const genAI = new GoogleGenerativeAI(API_KEY);
   
   // ✅ Use the latest supported model
-const model = genAI.getGenerativeModel({ model: "models/gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "models/gemini-2.0-flash" });
 
   const chat = model.startChat({
     generationConfig: {
