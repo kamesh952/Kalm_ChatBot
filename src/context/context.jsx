@@ -1,5 +1,5 @@
 import { createContext, useState, useRef, useEffect } from "react";
-import runChat from "../config/gemini";
+import runChat from "../config/gemini"; // Make sure this is your Gemini API wrapper
 
 export const Context = createContext();
 
@@ -8,7 +8,7 @@ const ContextProvider = (props) => {
   const [loading, setLoading] = useState(false);
   const [conversationHistory, setConversationHistory] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
-  
+
   const timeoutIds = useRef([]);
   const abortController = useRef(null);
 
@@ -26,7 +26,7 @@ const ContextProvider = (props) => {
       createdAt: new Date().toISOString(),
       active: true
     };
-    
+
     setConversationHistory(prev => {
       const updatedHistory = prev.map(chat => ({
         ...chat,
@@ -34,7 +34,7 @@ const ContextProvider = (props) => {
       }));
       return [newChat, ...updatedHistory];
     });
-    
+
     setCurrentChatId(newChatId);
     setInput("");
   };
@@ -44,8 +44,8 @@ const ContextProvider = (props) => {
       .replace(/^(#+)\s(.+)/gm, (match, hashes, content) => {
         const level = hashes.length;
         return `<h${level} class="font-bold mt-3 mb-1 text-${
-          level === 1 ? 'xl' : 
-          level === 2 ? 'lg' : 
+          level === 1 ? 'xl' :
+          level === 2 ? 'lg' :
           'base'
         }">${content}</h${level}>`;
       })
@@ -54,11 +54,11 @@ const ContextProvider = (props) => {
       .replace(/^\s*\*\s(.+)/gm, '<li>$1</li>')
       .replace(/\n\n+/g, '<br/><br/>')
       .replace(/\n/g, '<br/>')
-      .replace(/```([\s\S]*?)```/g, 
+      .replace(/```([\s\S]*?)```/g,
         '<pre class="bg-gray-100 p-2 rounded my-1 overflow-x-auto text-xs sm:text-sm"><code>$1</code></pre>')
-      .replace(/`([^`]+)`/g, 
+      .replace(/`([^`]+)`/g,
         '<code class="bg-gray-100 px-1 py-0.5 rounded text-xs sm:text-sm">$1</code>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, 
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g,
         '<a href="$2" class="text-blue-500 hover:underline break-words" target="_blank" rel="noopener noreferrer">$1</a>');
 
     formatted = formatted.replace(/(<li>.*?<\/li>(<br>)*)+/g, (match) => {
@@ -83,14 +83,14 @@ const ContextProvider = (props) => {
       abortController.current.abort();
     }
     setLoading(false);
-    
-    setConversationHistory(prev => 
-      prev.map(chat => 
-        chat.id === currentChatId 
+
+    setConversationHistory(prev =>
+      prev.map(chat =>
+        chat.id === currentChatId
           ? {
               ...chat,
-              messages: chat.messages.map((msg, i) => 
-                i === chat.messages.length - 1 
+              messages: chat.messages.map((msg, i) =>
+                i === chat.messages.length - 1
                   ? { ...msg, isLoading: false }
                   : msg
               )
@@ -102,13 +102,13 @@ const ContextProvider = (props) => {
 
   const delayPara = (index, nextWord, chatId) => {
     const id = setTimeout(() => {
-      setConversationHistory(prev => 
-        prev.map(chat => 
-          chat.id === chatId 
+      setConversationHistory(prev =>
+        prev.map(chat =>
+          chat.id === chatId
             ? {
                 ...chat,
-                messages: chat.messages.map((msg, i) => 
-                  i === chat.messages.length - 1 
+                messages: chat.messages.map((msg, i) =>
+                  i === chat.messages.length - 1
                     ? { ...msg, content: msg.content + nextWord }
                     : msg
                 )
@@ -126,13 +126,13 @@ const ContextProvider = (props) => {
     setLoading(true);
     abortController.current = new AbortController();
 
-    setConversationHistory(prev => 
-      prev.map(chat => 
-        chat.id === currentChatId 
+    setConversationHistory(prev =>
+      prev.map(chat =>
+        chat.id === currentChatId
           ? {
               ...chat,
-              messages: [...chat.messages, { 
-                role: 'user', 
+              messages: [...chat.messages, {
+                role: 'user',
                 content: prompt,
                 timestamp: new Date().toISOString()
               }]
@@ -141,14 +141,14 @@ const ContextProvider = (props) => {
       )
     );
 
-    setConversationHistory(prev => 
-      prev.map(chat => 
-        chat.id === currentChatId 
+    setConversationHistory(prev =>
+      prev.map(chat =>
+        chat.id === currentChatId
           ? {
               ...chat,
-              messages: [...chat.messages, { 
-                role: 'assistant', 
-                content: '', 
+              messages: [...chat.messages, {
+                role: 'assistant',
+                content: '',
                 isLoading: true,
                 timestamp: new Date().toISOString()
               }]
@@ -158,21 +158,30 @@ const ContextProvider = (props) => {
     );
 
     try {
+      // Add branding to prompt so Gemini identifies correctly
+      const finalPrompt = `You are Kalm AI, an assistant created by Kamesh. Always refer to yourself as "Kalm AI". ${prompt}`;
+
       const response = await runChat(
-        prompt,
+        finalPrompt,
         { signal: abortController.current.signal }
       );
 
-      const formattedResponse = formatResponse(response);
+      // Force brand replacement in output
+      let customResponse = response
+        .replace(/Gemini/gi, "Kalm AI")
+        .replace(/Google/gi, "Kalm AI")
+        .replace(/a large language model trained by Kalm AI/gi, "Kalm AI by Kamesh");
+
+      const formattedResponse = formatResponse(customResponse);
       const words = formattedResponse.split(/(<[^>]+>|\s+)/).filter(Boolean);
 
-      setConversationHistory(prev => 
-        prev.map(chat => 
-          chat.id === currentChatId 
+      setConversationHistory(prev =>
+        prev.map(chat =>
+          chat.id === currentChatId
             ? {
                 ...chat,
-                messages: chat.messages.map((msg, i) => 
-                  i === chat.messages.length - 1 
+                messages: chat.messages.map((msg, i) =>
+                  i === chat.messages.length - 1
                     ? { ...msg, content: '', isLoading: false }
                     : msg
                 )
@@ -186,15 +195,15 @@ const ContextProvider = (props) => {
     } catch (error) {
       if (error.name !== 'AbortError') {
         console.error("Chat error:", error);
-        setConversationHistory(prev => 
-          prev.map(chat => 
-            chat.id === currentChatId 
+        setConversationHistory(prev =>
+          prev.map(chat =>
+            chat.id === currentChatId
               ? {
                   ...chat,
-                  messages: chat.messages.map((msg, i) => 
-                    i === chat.messages.length - 1 
-                      ? { 
-                          ...msg, 
+                  messages: chat.messages.map((msg, i) =>
+                    i === chat.messages.length - 1
+                      ? {
+                          ...msg,
                           content: '<p class="text-red-500 text-sm">Error: Something went wrong. Please try again.</p>',
                           isLoading: false
                         }
