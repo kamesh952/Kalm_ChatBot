@@ -1,22 +1,19 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // ✅ Get API key from environment variables
-const API_KEY = process.env.GEMINI_API_KEY;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-const runChat = async (prompt) => {
+const runChat = async (prompt, options = {}) => {
   // Validate API key exists
   if (!API_KEY) {
-    throw new Error("GEMINI_API_KEY is not defined in environment variables");
+    throw new Error("VITE_GEMINI_API_KEY is not defined in environment variables");
   }
 
   const genAI = new GoogleGenerativeAI(API_KEY);
   
-  // ✅ Use the latest stable model
+  // Use a valid model
   const model = genAI.getGenerativeModel({ 
-    model: "gemini-2.5-flash"  // Note: "gemini-3.5-flash" doesn't exist. Use 1.5 or 2.0 models
-  });
-
-  const chat = model.startChat({
+    model: "gemini-2.5-flash",
     generationConfig: {
       temperature: 0.9,
       topK: 64,
@@ -41,13 +38,23 @@ const runChat = async (prompt) => {
         threshold: "BLOCK_MEDIUM_AND_ABOVE",
       },
     ],
-    history: [],
   });
 
-  const result = await chat.sendMessage(prompt);
-  const response = result.response;
-  console.log(response.text());
-  return response.text();
+  try {
+    const result = await model.generateContent(prompt, {
+      signal: options.signal || null
+    });
+    
+    const response = result.response;
+    return response.text();
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.log('Request aborted');
+      throw error;
+    }
+    console.error('Error calling Gemini API:', error);
+    throw error;
+  }
 };
 
 export default runChat;
