@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Main from './components/Main/Main';
+import Main from './Components/Main/Main';
 import Sidebar from './Components/Sidebar/Sidebar';
 
 const App = () => {
